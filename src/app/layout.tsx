@@ -16,7 +16,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={{
+      variables: {
+        colorBackground: "#141A2Aff",
+        colorPrimary: "white",
+        colorText: "white",
+        colorTextSecondary: "white",
+        colorTextOnPrimaryBackground: "white",
+        colorShimmer: "white",
+        colorInputBackground: "white",
+        colorNeutral: "white",
+
+      }
+    }}>
       <html suppressHydrationWarning lang="en">
         {/*
         <head /> will contain the components returned by the nearest parent
@@ -27,6 +39,7 @@ export default function RootLayout({
         <body className={`bg-[#FCFCFC] dark:bg-black ${inter.className}`}>
           <Providers>
             <Header />
+
             {children}
             <Footer />
             <ScrollToTop />
