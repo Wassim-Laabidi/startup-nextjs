@@ -20,13 +20,21 @@ import { Input } from "@/components/ui/input"
 import { postsSchema } from '@/lib/validation';
 import Image from 'next/image';
 import { createPost } from '@/lib/actions/post.action';
+import { useRouter, usePathname } from 'next/navigation';
+import { Router } from 'lucide-react';
 
 const type: any = 'create'
 
-const Post = () => {
+interface Props {
+    mongoUserId: string,
+}
+
+const Post = ({ mongoUserId }: Props) => {
     const editorRef = useRef(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    //Define form
+    const router = useRouter();
+    const pathname = usePathname();
     const form = useForm<z.infer<typeof postsSchema>>({
         resolver: zodResolver(postsSchema),
         defaultValues: {
@@ -43,8 +51,13 @@ const Post = () => {
             //make a async call to the API -> create a post
             //contain all form data
             await createPost({
-
-            })
+                title: values.title,
+                content: values.explanation,
+                tags: values.tags,
+                author: JSON.parse(mongoUserId),
+            });
+            // navigate to home page
+            router.push('/');
         } catch (error) {
 
         } finally {
@@ -168,7 +181,7 @@ const Post = () => {
                                                     }>
                                                     {tag}
                                                     <Image
-                                                        src="/assets/icons/close.svg"
+                                                        src="../../public/assets/icons/close.svg"
                                                         alt="close icon"
                                                         width={12} height={12}
                                                         className="cursor-pointer
