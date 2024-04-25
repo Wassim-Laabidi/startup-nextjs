@@ -21,7 +21,6 @@ import { postsSchema } from '@/lib/validation';
 import Image from 'next/image';
 import { createPost } from '@/lib/actions/post.action';
 import { useRouter, usePathname } from 'next/navigation';
-import { Router } from 'lucide-react';
 
 const type: any = 'create'
 

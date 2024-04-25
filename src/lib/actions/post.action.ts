@@ -3,8 +3,27 @@
 import Post from "@/database/post.model";
 import Tag from "@/database/tag.model";
 import { connectToDatabase } from "../mongoose";
+import { CreatePostParams, GetPostsParams } from "./shared.types";
+import User from "@/database/user.model";
 
-export async function createPost(params: any) {
+export async function getPosts(params: GetPostsParams) {
+  try {
+    connectToDatabase();
+
+    const posts = await Post.find({})
+      .populate({
+        path: "tags",
+        model: Tag,
+      })
+      .populate({ path: "author", model: User });
+    return { posts };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function createPost(params: CreatePostParams) {
   try {
     connectToDatabase();
     const { title, content, tags, author, path } = params;
