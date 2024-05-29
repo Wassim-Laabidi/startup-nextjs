@@ -2,7 +2,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
-import { createUser } from "@/lib/actions/user.action";
+import { createUser, updateUser, deleteUser } from "@/lib/actions/user.action";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -53,6 +53,7 @@ export async function POST(req: Request) {
 
   // Get the type
   const eventType = evt.type;
+  console.log({ eventType });
 
   /**
    * Listening for the account creation on the clerk side
@@ -78,36 +79,36 @@ export async function POST(req: Request) {
    * Listening for the account update on the clerk side
    *
    */
-  // if (eventType === "user.updated") {
-  //   const { id, email_addresses, image_url, username, first_name, last_name } =
-  //     evt.data;
+  if (eventType === "user.updated") {
+    const { id, email_addresses, image_url, username, first_name, last_name } =
+      evt.data;
 
-  // Update user in the database
-  //   const mongoUser = await updateUser({
-  //     clerkId: id,
-  //     updateData: {
-  //       name: `${first_name}${last_name ? ` ${last_name}` : ""}`,
-  //       username: username!, // <- ! means that we know that the username is not going to be undefined
-  //       email: email_addresses[0].email_address,
-  //       picture: image_url,
-  //     },
-  //     path: `/profile/${id}`,
-  //   });
+    // Update user in the database
+    const mongoUser = await updateUser({
+      clerkId: id,
+      updateData: {
+        name: `${first_name}${last_name ? ` ${last_name}` : ""}`,
+        username: username!, // <- ! means that we know that the username is not going to be undefined
+        email: email_addresses[0].email_address,
+        picture: image_url,
+      },
+      path: `/profile/${id}`,
+    });
 
-  //   return NextResponse.json({ message: "OK", user: mongoUser });
-  // }
+    return NextResponse.json({ message: "OK", user: mongoUser });
+  }
 
   /**
    * Listening for the account delete on the clerk side
    *
    */
-  //   if (eventType === "user.deleted") {
-  //     const { id } = evt.data;
+  if (eventType === "user.deleted") {
+    const { id } = evt.data;
 
-  //     const deletedUser = await deleteUser({ clerkId: id! });
+    const deletedUser = await deleteUser({ clerkId: id! });
 
-  //     return NextResponse.json({ message: "OK", user: deletedUser });
-  //   }
+    return NextResponse.json({ message: "OK", user: deletedUser });
+  }
 
-  //   return new Response("", { status: 201 });
+  return new Response("", { status: 201 });
 }
